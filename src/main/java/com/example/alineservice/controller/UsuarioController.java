@@ -1,10 +1,10 @@
 package com.example.alineservice.controller;
 
 import com.example.alineservice.model.Usuario;
+import com.example.alineservice.service.UsuarioService;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import service.UsuarioService;
 
 import java.util.List;
 

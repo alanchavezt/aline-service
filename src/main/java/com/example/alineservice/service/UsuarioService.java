@@ -1,6 +1,6 @@
-package service;
+package com.example.alineservice.service;
 
-import model.Usuario;
+import com.example.alineservice.model.Usuario;
 
 import java.util.ArrayList;
 import java.util.List;
