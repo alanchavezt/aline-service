@@ -32,13 +32,13 @@ public class UsuarioController {
         return Response.status(Response.Status.CREATED).build();
     }
 
-    @PUT
-    @Path("/{id}")
-    public Response actualizarUsuario(@PathParam("id") int id, Usuario usuario) {
-        usuario.setId(id);
-        usuarioService.actualizarUsuario(usuario);
-        return Response.ok().build();
-    }
+//    @PUT
+//    @Path("/{id}")
+//    public Response actualizarUsuario(@PathParam("id") int id, Usuario usuario) {
+//        usuario.setId(id);
+//        usuarioService.actualizarUsuario(usuario);
+//        return Response.ok().build();
+//    }
 
     @DELETE
     @Path("/{id}")

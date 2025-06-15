@@ -34,25 +34,25 @@ public class UsuarioService {
     }
 
     // Actualizar usuario
-    public Usuario actualizarUsuario(int id, Usuario usuarioActualizado) {
-        Optional<Usuario> usuarioOpt = usuarios.stream()
-                .filter(u -> u.getId() == id)
-                .findFirst();
-
-        if (usuarioOpt.isPresent()) {
-            Usuario existente = usuarioOpt.get();
-            existente.setNombre(usuarioActualizado.getNombre());
-            existente.setApellido(usuarioActualizado.getApellido());
-            existente.setNombreUsuario(usuarioActualizado.getNombreUsuario());
-            existente.setCorreo(usuarioActualizado.getCorreo());
-            existente.setContrasena(usuarioActualizado.getContrasena());
-            existente.setRutaLogo(usuarioActualizado.getRutaLogo());
-            existente.setEstado(usuarioActualizado.isEstado());
-            return existente;
-        }
-
-        return null;
-    }
+//    public Usuario actualizarUsuario(int id, Usuario usuarioActualizado) {
+//        Optional<Usuario> usuarioOpt = usuarios.stream()
+//                .filter(u -> u.getId() == id)
+//                .findFirst();
+//
+//        if (usuarioOpt.isPresent()) {
+//            Usuario existente = usuarioOpt.get();
+//            existente.setNombre(usuarioActualizado.getNombre());
+//            existente.setApellido(usuarioActualizado.getApellido());
+//            existente.setNombreUsuario(usuarioActualizado.getNombreUsuario());
+//            existente.setCorreo(usuarioActualizado.getCorreo());
+//            existente.setContrasena(usuarioActualizado.getContrasena());
+//            existente.setRutaLogo(usuarioActualizado.getRutaLogo());
+//            existente.setEstado(usuarioActualizado.isEstado());
+//            return existente;
+//        }
+//
+//        return null;
+//    }
 
     // Eliminar usuario por ID
     public boolean eliminarUsuario(int id) {
