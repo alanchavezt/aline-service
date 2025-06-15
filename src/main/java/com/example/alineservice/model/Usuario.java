@@ -1,4 +1,4 @@
-package model;
+package com.example.alineservice.model;
 
 public class Usuario {
     private int id;
@@ -10,6 +10,9 @@ public class Usuario {
     private String ruta_logo;
     private String fecha_registro;
     private boolean estado;
+
+    public Usuario() {
+    }
 
     // Constructor
     public Usuario(int id, String nombre, String apellido, String nombre_usuario,

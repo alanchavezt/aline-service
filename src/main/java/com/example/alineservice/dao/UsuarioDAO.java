@@ -1,6 +1,7 @@
-package dao;
+package com.example.alineservice.dao;
 
-import model.Usuario;
+import com.example.alineservice.model.Usuario;
+
 import java.sql.*;
 import java.util.*;
 
