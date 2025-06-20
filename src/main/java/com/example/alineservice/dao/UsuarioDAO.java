@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioDAO {
+
     public Usuario login(String correo, String contrasena) {
         String sql = "SELECT * FROM mae_usuario WHERE correo = ? AND contrasena_hash = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -102,5 +103,62 @@ public class UsuarioDAO {
             e.printStackTrace();
         }
         return lista;
+    }
+
+    public Usuario obtenerPorId(int id) {
+        String sql = "SELECT * FROM mae_usuario WHERE id_usuario = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Usuario u = new Usuario();
+                u.setIdUsuario(rs.getInt("id_usuario"));
+                u.setNombreUsuario(rs.getString("nombre_usuario"));
+                u.setCorreo(rs.getString("correo"));
+                u.setContrasenaHash(rs.getString("contrasena_hash"));
+                u.setFechaRegistro(rs.getString("fecha_registro"));
+                u.setEstadoCuenta(rs.getBoolean("estado_cuenta"));
+                return u;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean actualizar(int id, Usuario usuario) {
+        String sql = "UPDATE mae_usuario SET nombre_usuario = ?, correo = ?, contrasena_hash = ?, estado_cuenta = ? WHERE id_usuario = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, usuario.getNombreUsuario());
+            stmt.setString(2, usuario.getCorreo());
+            stmt.setString(3, usuario.getContrasenaHash());
+            stmt.setBoolean(4, usuario.isEstadoCuenta());
+            stmt.setInt(5, id);
+
+            int filas = stmt.executeUpdate();
+            return filas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean eliminar(int id) {
+        String sql = "DELETE FROM mae_usuario WHERE id_usuario = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            int filas = stmt.executeUpdate();
+            return filas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
