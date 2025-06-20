@@ -3,9 +3,9 @@ package com.example.alineservice.controller.boleta;
 import com.example.alineservice.dao.BoletaDAO;
 import com.example.alineservice.model.Boleta;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/boletas")
