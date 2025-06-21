@@ -63,7 +63,7 @@ public class UsuarioDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return true;
+        return false; // ← importante
     }
 
     public boolean existeUsuario(String nombre) {
@@ -79,7 +79,7 @@ public class UsuarioDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return true;
+        return false; // ← importante
     }
 
     public List<Usuario> getAll() {
