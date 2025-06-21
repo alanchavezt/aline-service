@@ -26,6 +26,10 @@ public class UsuarioController {
             return Response.status(Response.Status.CONFLICT).entity("El nombre de usuario ya existe").build();
         }
 
+        if (usuario.getNombreUsuario() == null || usuario.getCorreo() == null || usuario.getContrasenaHash() == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Faltan campos obligatorios").build();
+        }
+
         boolean exito = dao.registrar(usuario);
         if (exito) {
             return Response.ok("Usuario registrado exitosamente").build();
