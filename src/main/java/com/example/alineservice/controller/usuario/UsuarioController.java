@@ -18,6 +18,11 @@ public class UsuarioController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response registrar(Usuario usuario) {
+        // Validación previa de campos
+        if (usuario.getNombreUsuario() == null || usuario.getCorreo() == null || usuario.getContrasenaHash() == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Faltan campos obligatorios").build();
+        }
+
         if (dao.existeCorreo(usuario.getCorreo())) {
             return Response.status(Response.Status.CONFLICT).entity("El correo ya está registrado").build();
         }
@@ -26,15 +31,28 @@ public class UsuarioController {
             return Response.status(Response.Status.CONFLICT).entity("El nombre de usuario ya existe").build();
         }
 
-        if (usuario.getNombreUsuario() == null || usuario.getCorreo() == null || usuario.getContrasenaHash() == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Faltan campos obligatorios").build();
-        }
-
         boolean exito = dao.registrar(usuario);
         if (exito) {
             return Response.ok("Usuario registrado exitosamente").build();
         } else {
             return Response.serverError().entity("Error al registrar usuario").build();
+        }
+    }
+
+    @POST
+    @Path("/login")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response login(Usuario user) {
+        if (user.getCorreo() == null || user.getContrasenaHash() == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Faltan datos para login").build();
+        }
+
+        Usuario u = dao.login(user.getCorreo(), user.getContrasenaHash());
+        if (u != null) {
+            return Response.ok(u).build();
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Credenciales incorrectas").build();
         }
     }
 
@@ -53,7 +71,7 @@ public class UsuarioController {
         if (usuario != null) {
             return Response.ok(usuario).build();
         } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Usuario no encontrado").build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Usuario con ID " + id + " no encontrado").build();
         }
     }
 
@@ -66,7 +84,7 @@ public class UsuarioController {
         if (actualizado) {
             return Response.ok("Usuario actualizado correctamente").build();
         } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Usuario no encontrado").build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Usuario con ID " + id + " no encontrado").build();
         }
     }
 
@@ -78,7 +96,7 @@ public class UsuarioController {
         if (eliminado) {
             return Response.ok("Usuario eliminado correctamente").build();
         } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Usuario no encontrado").build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Usuario con ID " + id + " no encontrado").build();
         }
     }
 }

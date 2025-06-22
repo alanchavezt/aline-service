@@ -19,16 +19,10 @@ public class UsuarioDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                Usuario u = new Usuario();
-                u.setIdUsuario(rs.getInt("id_usuario"));
-                u.setNombreUsuario(rs.getString("nombre_usuario"));
-                u.setCorreo(rs.getString("correo"));
-                u.setContrasenaHash(rs.getString("contrasena_hash"));
-                u.setFechaRegistro(rs.getString("fecha_registro"));
-                u.setEstadoCuenta(rs.getBoolean("estado_cuenta"));
-                return u;
+                return mapUsuario(rs);
             }
         } catch (SQLException e) {
+            System.err.println("Error en login:");
             e.printStackTrace();
         }
         return null;
@@ -42,9 +36,9 @@ public class UsuarioDAO {
             stmt.setString(1, usuario.getNombreUsuario());
             stmt.setString(2, usuario.getCorreo());
             stmt.setString(3, usuario.getContrasenaHash());
-            int filas = stmt.executeUpdate();
-            return filas > 0;
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            System.err.println("Error al registrar usuario:");
             e.printStackTrace();
         }
         return false;
@@ -57,29 +51,27 @@ public class UsuarioDAO {
 
             stmt.setString(1, correo);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
+            return rs.next() && rs.getInt(1) > 0;
         } catch (SQLException e) {
+            System.err.println("Error al verificar correo:");
             e.printStackTrace();
         }
-        return false; // ← importante
+        return false;
     }
 
-    public boolean existeUsuario(String nombre) {
+    public boolean existeUsuario(String nombreUsuario) {
         String sql = "SELECT COUNT(*) FROM mae_usuario WHERE nombre_usuario = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, nombre);
+            stmt.setString(1, nombreUsuario);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
+            return rs.next() && rs.getInt(1) > 0;
         } catch (SQLException e) {
+            System.err.println("Error al verificar nombre de usuario:");
             e.printStackTrace();
         }
-        return false; // ← importante
+        return false;
     }
 
     public List<Usuario> getAll() {
@@ -90,16 +82,10 @@ public class UsuarioDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Usuario u = new Usuario();
-                u.setIdUsuario(rs.getInt("id_usuario"));
-                u.setNombreUsuario(rs.getString("nombre_usuario"));
-                u.setCorreo(rs.getString("correo"));
-                u.setContrasenaHash(rs.getString("contrasena_hash"));
-                u.setFechaRegistro(rs.getString("fecha_registro"));
-                u.setEstadoCuenta(rs.getBoolean("estado_cuenta"));
-                lista.add(u);
+                lista.add(mapUsuario(rs));
             }
         } catch (SQLException e) {
+            System.err.println("Error al obtener todos los usuarios:");
             e.printStackTrace();
         }
         return lista;
@@ -114,16 +100,10 @@ public class UsuarioDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                Usuario u = new Usuario();
-                u.setIdUsuario(rs.getInt("id_usuario"));
-                u.setNombreUsuario(rs.getString("nombre_usuario"));
-                u.setCorreo(rs.getString("correo"));
-                u.setContrasenaHash(rs.getString("contrasena_hash"));
-                u.setFechaRegistro(rs.getString("fecha_registro"));
-                u.setEstadoCuenta(rs.getBoolean("estado_cuenta"));
-                return u;
+                return mapUsuario(rs);
             }
         } catch (SQLException e) {
+            System.err.println("Error al obtener usuario por ID:");
             e.printStackTrace();
         }
         return null;
@@ -139,10 +119,9 @@ public class UsuarioDAO {
             stmt.setString(3, usuario.getContrasenaHash());
             stmt.setBoolean(4, usuario.isEstadoCuenta());
             stmt.setInt(5, id);
-
-            int filas = stmt.executeUpdate();
-            return filas > 0;
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            System.err.println("Error al actualizar usuario:");
             e.printStackTrace();
         }
         return false;
@@ -154,11 +133,22 @@ public class UsuarioDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
-            int filas = stmt.executeUpdate();
-            return filas > 0;
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            System.err.println("Error al eliminar usuario:");
             e.printStackTrace();
         }
         return false;
+    }
+
+    private Usuario mapUsuario(ResultSet rs) throws SQLException {
+        Usuario u = new Usuario();
+        u.setIdUsuario(rs.getInt("id_usuario"));
+        u.setNombreUsuario(rs.getString("nombre_usuario"));
+        u.setCorreo(rs.getString("correo"));
+        u.setContrasenaHash(rs.getString("contrasena_hash"));
+        u.setFechaRegistro(rs.getString("fecha_registro"));
+        u.setEstadoCuenta(rs.getBoolean("estado_cuenta"));
+        return u;
     }
 }
