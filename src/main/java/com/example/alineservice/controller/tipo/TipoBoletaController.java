@@ -8,7 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/tipos-boleta")
+@Path("/tipoboletas")
 public class TipoBoletaController {
 
     TipoBoletaDAO dao = new TipoBoletaDAO();
