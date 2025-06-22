@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MonedaDAO {
+
     public List<Moneda> listar() {
         List<Moneda> lista = new ArrayList<>();
         String sql = "SELECT * FROM mae_moneda";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -21,46 +23,53 @@ public class MonedaDAO {
                 m.setNombreMoneda(rs.getString("nombre_moneda"));
                 lista.add(m);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return lista;
     }
 
-    public boolean registrar(Moneda m) {
+    public boolean registrar(Moneda moneda) {
         String sql = "INSERT INTO mae_moneda(nombre_moneda) VALUES (?)";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, m.getNombreMoneda());
+            stmt.setString(1, moneda.getNombreMoneda());
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public boolean actualizar(Moneda m) {
+    public boolean actualizar(Moneda moneda) {
         String sql = "UPDATE mae_moneda SET nombre_moneda = ? WHERE id_moneda = ?";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, m.getNombreMoneda());
-            stmt.setInt(2, m.getIdMoneda());
+            stmt.setString(1, moneda.getNombreMoneda());
+            stmt.setInt(2, moneda.getIdMoneda());
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public boolean eliminar(int id) {
+    public boolean eliminar(int idMoneda) {
         String sql = "DELETE FROM mae_moneda WHERE id_moneda = ?";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, id);
+            stmt.setInt(1, idMoneda);
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

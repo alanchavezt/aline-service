@@ -1,4 +1,4 @@
-package com.example.alineservice.controller.tipo;
+package com.example.alineservice.controller.moneda;
 
 import com.example.alineservice.dao.MonedaDAO;
 import com.example.alineservice.model.Moneda;
@@ -11,7 +11,7 @@ import java.util.List;
 @Path("/monedas")
 public class MonedaController {
 
-    MonedaDAO dao = new MonedaDAO();
+    private MonedaDAO dao = new MonedaDAO();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -22,8 +22,8 @@ public class MonedaController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registrar(Moneda m) {
-        boolean exito = dao.registrar(m);
+    public Response registrar(Moneda moneda) {
+        boolean exito = dao.registrar(moneda);
         if (exito) {
             return Response.ok("Moneda registrada correctamente").build();
         } else {
@@ -34,8 +34,8 @@ public class MonedaController {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response actualizar(Moneda m) {
-        boolean exito = dao.actualizar(m);
+    public Response actualizar(Moneda moneda) {
+        boolean exito = dao.actualizar(moneda);
         if (exito) {
             return Response.ok("Moneda actualizada correctamente").build();
         } else {
@@ -45,6 +45,7 @@ public class MonedaController {
 
     @DELETE
     @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response eliminar(@PathParam("id") int id) {
         boolean exito = dao.eliminar(id);
         if (exito) {
