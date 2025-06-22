@@ -8,12 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SesionDAO {
+
     public List<Sesion> listar() {
         List<Sesion> lista = new ArrayList<>();
         String sql = "SELECT * FROM trs_sesion";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 Sesion s = new Sesion();
@@ -30,10 +31,14 @@ public class SesionDAO {
     }
 
     public boolean registrar(Sesion s) {
-        String sql = "INSERT INTO trs_sesion(id_usuario) VALUES (?)";
+        String sql = "INSERT INTO trs_sesion (id_usuario, fecha_inicio, fecha_cierre) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, s.getIdUsuario());
+            stmt.setString(2, s.getFechaInicio());
+            stmt.setString(3, s.getFechaCierre());
+
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,16 +46,34 @@ public class SesionDAO {
         return false;
     }
 
-    public boolean cerrarSesion(int idSesion) {
-        String sql = "UPDATE trs_sesion SET fecha_cierre = CURRENT_TIMESTAMP WHERE id_sesion = ?";
+    public boolean actualizar(Sesion s) {
+        String sql = "UPDATE trs_sesion SET id_usuario = ?, fecha_inicio = ?, fecha_cierre = ? WHERE id_sesion = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, s.getIdUsuario());
+            stmt.setString(2, s.getFechaInicio());
+            stmt.setString(3, s.getFechaCierre());
+            stmt.setInt(4, s.getIdSesion());
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean eliminar(int idSesion) {
+        String sql = "DELETE FROM trs_sesion WHERE id_sesion = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, idSesion);
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 }
-
