@@ -25,9 +25,30 @@ public class SesionDAO {
                 lista.add(s);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("[LISTAR SESIONES ERROR] " + e.getMessage());
         }
         return lista;
+    }
+
+    // Método para registrar sesión y retornar el ID generado
+    public int registrarYRetornarId(Sesion s) {
+        String sql = "INSERT INTO trs_sesion (id_usuario) VALUES (?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setInt(1, s.getIdUsuario());
+            int filas = stmt.executeUpdate();
+
+            if (filas > 0) {
+                ResultSet rs = stmt.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1); // id_sesion generado
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("[REGISTRAR SESION ERROR] " + e.getMessage());
+        }
+        return -1;
     }
 
     public boolean registrar(Sesion s) {
@@ -41,7 +62,7 @@ public class SesionDAO {
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("[REGISTRAR SESION (manual) ERROR] " + e.getMessage());
         }
         return false;
     }
@@ -58,7 +79,7 @@ public class SesionDAO {
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("[ACTUALIZAR SESION ERROR] " + e.getMessage());
         }
         return false;
     }
@@ -72,7 +93,20 @@ public class SesionDAO {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("[ELIMINAR SESION ERROR] " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean cerrarSesion(int idSesion, String fechaCierre) {
+        String sql = "UPDATE trs_sesion SET fecha_cierre = ? WHERE id_sesion = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, fechaCierre);
+            stmt.setInt(2, idSesion);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("[CERRAR SESION ERROR] " + e.getMessage());
         }
         return false;
     }

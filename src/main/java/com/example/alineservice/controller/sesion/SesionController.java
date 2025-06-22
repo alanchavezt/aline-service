@@ -24,11 +24,15 @@ public class SesionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response registrar(Sesion s) {
-        boolean exito = dao.registrar(s);
-        if (exito) {
-            return Response.ok("Sesión registrada correctamente").build();
+        int idSesion = dao.registrarYRetornarId(s);
+        if (idSesion > 0) {
+            s.setIdSesion(idSesion);
+            return Response.ok(s).build();  // Devuelve JSON con la sesión completa
         } else {
-            return Response.serverError().entity("Error al registrar sesión").build();
+            return Response.serverError()
+                    .entity("{\"error\":\"Error al registrar sesión\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
         }
     }
 
@@ -40,7 +44,10 @@ public class SesionController {
         if (exito) {
             return Response.ok("Sesión actualizada correctamente").build();
         } else {
-            return Response.serverError().entity("Error al actualizar sesión").build();
+            return Response.serverError()
+                    .entity("{\"error\":\"Error al actualizar sesión\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
         }
     }
 
@@ -51,7 +58,26 @@ public class SesionController {
         if (exito) {
             return Response.ok("Sesión eliminada correctamente").build();
         } else {
-            return Response.serverError().entity("Error al eliminar sesión").build();
+            return Response.serverError()
+                    .entity("{\"error\":\"Error al eliminar sesión\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
+    }
+
+    @PATCH
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cerrarSesion(@PathParam("id") int id, Sesion sesion) {
+        boolean actualizado = dao.cerrarSesion(id, sesion.getFechaCierre());
+        if (actualizado) {
+            return Response.ok("Sesión cerrada correctamente").build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\":\"No se pudo cerrar sesión\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
         }
     }
 }
