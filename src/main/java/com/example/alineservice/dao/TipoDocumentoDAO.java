@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TipoDocumentoDAO {
+
     public List<TipoDocumento> listar() {
         List<TipoDocumento> lista = new ArrayList<>();
         String sql = "SELECT * FROM mae_tipo_documento";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
-
             while (rs.next()) {
                 TipoDocumento td = new TipoDocumento();
                 td.setIdTipoDocumento(rs.getInt("id_tipo_documento"));
@@ -34,6 +34,7 @@ public class TipoDocumentoDAO {
 
             stmt.setString(1, td.getNombreDocumento());
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -48,6 +49,7 @@ public class TipoDocumentoDAO {
             stmt.setString(1, td.getNombreDocumento());
             stmt.setInt(2, td.getIdTipoDocumento());
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -61,6 +63,7 @@ public class TipoDocumentoDAO {
 
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

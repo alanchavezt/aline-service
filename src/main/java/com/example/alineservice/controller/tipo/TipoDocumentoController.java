@@ -8,7 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/tipos-documento")
+@Path("/tipodocumentos")
 public class TipoDocumentoController {
 
     TipoDocumentoDAO dao = new TipoDocumentoDAO();
