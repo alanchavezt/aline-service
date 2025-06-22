@@ -8,7 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/tipos-entidad")
+@Path("/tipoentidades")
 public class TipoEntidadController {
 
     TipoEntidadDAO dao = new TipoEntidadDAO();
@@ -22,10 +22,10 @@ public class TipoEntidadController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registrar(TipoEntidad te) {
-        boolean exito = dao.registrar(te);
+    public Response registrar(TipoEntidad entidad) {
+        boolean exito = dao.registrar(entidad);
         if (exito) {
-            return Response.ok("Tipo de entidad registrado correctamente").build();
+            return Response.ok("Tipo de entidad registrada correctamente").build();
         } else {
             return Response.serverError().entity("Error al registrar tipo de entidad").build();
         }
@@ -34,10 +34,10 @@ public class TipoEntidadController {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response actualizar(TipoEntidad te) {
-        boolean exito = dao.actualizar(te);
+    public Response actualizar(TipoEntidad entidad) {
+        boolean exito = dao.actualizar(entidad);
         if (exito) {
-            return Response.ok("Tipo de entidad actualizado correctamente").build();
+            return Response.ok("Tipo de entidad actualizada correctamente").build();
         } else {
             return Response.serverError().entity("Error al actualizar tipo de entidad").build();
         }
@@ -48,7 +48,7 @@ public class TipoEntidadController {
     public Response eliminar(@PathParam("id") int id) {
         boolean exito = dao.eliminar(id);
         if (exito) {
-            return Response.ok("Tipo de entidad eliminado correctamente").build();
+            return Response.ok("Tipo de entidad eliminada correctamente").build();
         } else {
             return Response.serverError().entity("Error al eliminar tipo de entidad").build();
         }
