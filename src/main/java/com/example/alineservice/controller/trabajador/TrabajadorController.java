@@ -31,8 +31,21 @@ public class TrabajadorController {
         }
     }
 
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response actualizar(Trabajador t) {
+        boolean exito = dao.actualizar(t);
+        if (exito) {
+            return Response.ok("Trabajador actualizado correctamente").build();
+        } else {
+            return Response.serverError().entity("Error al actualizar trabajador").build();
+        }
+    }
+
     @DELETE
     @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response eliminar(@PathParam("id") int id) {
         boolean exito = dao.eliminar(id);
         if (exito) {

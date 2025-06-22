@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TrabajadorDAO {
+
     public List<Trabajador> listar() {
         List<Trabajador> lista = new ArrayList<>();
         String sql = "SELECT * FROM mae_trabajador";
@@ -65,6 +66,33 @@ public class TrabajadorDAO {
         return false;
     }
 
+    public boolean actualizar(Trabajador t) {
+        String sql = "UPDATE mae_trabajador SET numero_documento = ?, id_tipo_documento = ?, id_tipo_entidad = ?, razon_social = ?, apellido_paterno = ?, apellido_materno = ?, nombres = ?, direccion_fiscal = ?, cargo = ?, fecha_ingreso = ?, email = ?, telefono = ?, nota = ? WHERE id_trabajador = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, t.getNumeroDocumento());
+            stmt.setInt(2, t.getIdTipoDocumento());
+            stmt.setInt(3, t.getIdTipoEntidad());
+            stmt.setString(4, t.getRazonSocial());
+            stmt.setString(5, t.getApellidoPaterno());
+            stmt.setString(6, t.getApellidoMaterno());
+            stmt.setString(7, t.getNombres());
+            stmt.setString(8, t.getDireccionFiscal());
+            stmt.setString(9, t.getCargo());
+            stmt.setString(10, t.getFechaIngreso());
+            stmt.setString(11, t.getEmail());
+            stmt.setString(12, t.getTelefono());
+            stmt.setString(13, t.getNota());
+            stmt.setInt(14, t.getIdTrabajador());
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public boolean eliminar(int id) {
         String sql = "DELETE FROM mae_trabajador WHERE id_trabajador = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -77,4 +105,3 @@ public class TrabajadorDAO {
         return false;
     }
 }
-
