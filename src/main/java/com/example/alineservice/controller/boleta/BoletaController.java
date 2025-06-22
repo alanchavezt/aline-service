@@ -30,4 +30,26 @@ public class BoletaController {
             return Response.serverError().entity("Error al registrar boleta").build();
         }
     }
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response actualizar(Boleta boleta) {
+        boolean actualizado = dao.actualizar(boleta);
+        if (actualizado) {
+            return Response.ok("Boleta actualizada correctamente").build();
+        } else {
+            return Response.serverError().entity("Error al actualizar boleta").build();
+        }
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response eliminar(@PathParam("id") int id) {
+        boolean exito = dao.eliminar(id);
+        if (exito) {
+            return Response.ok("Boleta eliminada correctamente").build();
+        } else {
+            return Response.serverError().entity("Error al eliminar boleta").build();
+        }
+    }
 }

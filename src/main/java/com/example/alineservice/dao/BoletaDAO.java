@@ -12,8 +12,8 @@ public class BoletaDAO {
         List<Boleta> lista = new ArrayList<>();
         String sql = "SELECT * FROM trs_boleta";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 Boleta b = new Boleta();
@@ -48,7 +48,39 @@ public class BoletaDAO {
     }
 
     public boolean registrar(Boleta b) {
-        String sql = "INSERT INTO trs_boleta (correlativo, numero_boleta, id_trabajador, id_tipo_boleta, fecha_emision, retencion_renta_aplica, id_moneda, tipo_cambio, remuneracion_basica, asignacion_familiar, retencion_renta, snp, afp, comision_afp, seguro_afp, essalud_regular, bancarizado, descripcion, ruta_pdf, id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO trs_boleta(correlativo, numero_boleta, id_trabajador, id_tipo_boleta, fecha_emision, retencion_renta_aplica, id_moneda, tipo_cambio, remuneracion_basica, asignacion_familiar, retencion_renta, snp, afp, comision_afp, seguro_afp, essalud_regular, bancarizado, descripcion, ruta_pdf, fecha_creacion, id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, b.getCorrelativo());
+            stmt.setString(2, b.getNumeroBoleta());
+            stmt.setInt(3, b.getIdTrabajador());
+            stmt.setInt(4, b.getIdTipoBoleta());
+            stmt.setString(5, b.getFechaEmision());
+            stmt.setBoolean(6, b.isRetencionRentaAplica());
+            stmt.setInt(7, b.getIdMoneda());
+            stmt.setDouble(8, b.getTipoCambio());
+            stmt.setDouble(9, b.getRemuneracionBasica());
+            stmt.setDouble(10, b.getAsignacionFamiliar());
+            stmt.setDouble(11, b.getRetencionRenta());
+            stmt.setDouble(12, b.getSnp());
+            stmt.setDouble(13, b.getAfp());
+            stmt.setDouble(14, b.getComisionAfp());
+            stmt.setDouble(15, b.getSeguroAfp());
+            stmt.setDouble(16, b.getEssaludRegular());
+            stmt.setBoolean(17, b.isBancarizado());
+            stmt.setString(18, b.getDescripcion());
+            stmt.setString(19, b.getRutaPdf());
+            stmt.setString(20, b.getFechaCreacion());
+            stmt.setInt(21, b.getIdUsuario());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean actualizar(Boleta b) {
+        String sql = "UPDATE trs_boleta SET correlativo = ?, numero_boleta = ?, id_trabajador = ?, id_tipo_boleta = ?, fecha_emision = ?, retencion_renta_aplica = ?, id_moneda = ?, tipo_cambio = ?, remuneracion_basica = ?, asignacion_familiar = ?, retencion_renta = ?, snp = ?, afp = ?, comision_afp = ?, seguro_afp = ?, essalud_regular = ?, bancarizado = ?, descripcion = ?, ruta_pdf = ?, fecha_creacion = ?, id_usuario = ? WHERE id_boleta = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -71,7 +103,9 @@ public class BoletaDAO {
             stmt.setBoolean(17, b.isBancarizado());
             stmt.setString(18, b.getDescripcion());
             stmt.setString(19, b.getRutaPdf());
-            stmt.setInt(20, b.getIdUsuario());
+            stmt.setString(20, b.getFechaCreacion());
+            stmt.setInt(21, b.getIdUsuario());
+            stmt.setInt(22, b.getIdBoleta());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -79,5 +113,16 @@ public class BoletaDAO {
         }
         return false;
     }
-}
 
+    public boolean eliminar(int id) {
+        String sql = "DELETE FROM trs_boleta WHERE id_boleta = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+}
