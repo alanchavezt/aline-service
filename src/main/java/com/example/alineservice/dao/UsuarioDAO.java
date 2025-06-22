@@ -18,22 +18,36 @@ public class UsuarioDAO {
             stmt.setString(1, correo);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                String hash = rs.getString("contrasena_hash");
-                if (BCrypt.checkpw(contrasena, hash)) {
-                    Usuario u = new Usuario();
-                    u.setIdUsuario(rs.getInt("id_usuario"));
-                    u.setNombreUsuario(rs.getString("nombre_usuario"));
-                    u.setCorreo(rs.getString("correo"));
-                    u.setContrasenaHash(hash);
-                    u.setFechaRegistro(rs.getString("fecha_registro"));
-                    u.setEstadoCuenta(rs.getBoolean("estado_cuenta"));
-                    return u;
-                }
+            if (!rs.next()) {
+                // Correo no registrado
+                Usuario noExiste = new Usuario();
+                noExiste.setIdUsuario(0); // 0 = correo no registrado
+                return noExiste;
             }
+
+            String hash = rs.getString("contrasena_hash");
+
+            if (!BCrypt.checkpw(contrasena, hash)) {
+                // Contraseña incorrecta
+                Usuario incorrecto = new Usuario();
+                incorrecto.setIdUsuario(-1); // -1 = contraseña incorrecta
+                return incorrecto;
+            }
+
+            // Usuario válido
+            Usuario u = new Usuario();
+            u.setIdUsuario(rs.getInt("id_usuario"));
+            u.setNombreUsuario(rs.getString("nombre_usuario"));
+            u.setCorreo(rs.getString("correo"));
+            u.setContrasenaHash(hash);
+            u.setFechaRegistro(rs.getString("fecha_registro"));
+            u.setEstadoCuenta(rs.getBoolean("estado_cuenta"));
+            return u;
+
         } catch (SQLException e) {
             System.err.println("[LOGIN ERROR] " + e.getMessage());
         }
+
         return null;
     }
 
@@ -42,19 +56,22 @@ public class UsuarioDAO {
             System.err.println("[VALIDACION] La contraseña debe tener al menos 6 caracteres.");
             return false;
         }
+
         String hash = BCrypt.hashpw(usuario.getContrasenaHash(), BCrypt.gensalt());
         String sql = "INSERT INTO mae_usuario(nombre_usuario, correo, contrasena_hash) VALUES (?, ?, ?)";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, usuario.getNombreUsuario());
             stmt.setString(2, usuario.getCorreo());
             stmt.setString(3, hash);
-            int filas = stmt.executeUpdate();
-            return filas > 0;
+            return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             System.err.println("[REGISTRO ERROR] " + e.getMessage());
         }
+
         return false;
     }
 
@@ -65,12 +82,12 @@ public class UsuarioDAO {
 
             stmt.setString(1, correo);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
+            return rs.next() && rs.getInt(1) > 0;
+
         } catch (SQLException e) {
             System.err.println("[EXISTE CORREO ERROR] " + e.getMessage());
         }
+
         return false;
     }
 
@@ -81,12 +98,12 @@ public class UsuarioDAO {
 
             stmt.setString(1, nombre);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
+            return rs.next() && rs.getInt(1) > 0;
+
         } catch (SQLException e) {
             System.err.println("[EXISTE USUARIO ERROR] " + e.getMessage());
         }
+
         return false;
     }
 
@@ -100,10 +117,12 @@ public class UsuarioDAO {
             while (rs.next()) {
                 lista.add(mapUsuario(rs));
             }
+
         } catch (SQLException e) {
             System.err.println("Error al obtener todos los usuarios:");
             e.printStackTrace();
         }
+
         return lista;
     }
 
@@ -118,10 +137,12 @@ public class UsuarioDAO {
             if (rs.next()) {
                 return mapUsuario(rs);
             }
+
         } catch (SQLException e) {
             System.err.println("Error al obtener usuario por ID:");
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -136,10 +157,12 @@ public class UsuarioDAO {
             stmt.setBoolean(4, usuario.isEstadoCuenta());
             stmt.setInt(5, id);
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             System.err.println("Error al actualizar usuario:");
             e.printStackTrace();
         }
+
         return false;
     }
 
@@ -150,10 +173,12 @@ public class UsuarioDAO {
 
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             System.err.println("Error al eliminar usuario:");
             e.printStackTrace();
         }
+
         return false;
     }
 

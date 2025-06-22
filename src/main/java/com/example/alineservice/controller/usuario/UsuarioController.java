@@ -18,7 +18,6 @@ public class UsuarioController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response registrar(Usuario usuario) {
-        // Validación previa de campos
         if (usuario.getNombreUsuario() == null || usuario.getCorreo() == null || usuario.getContrasenaHash() == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Faltan campos obligatorios").build();
         }
@@ -49,14 +48,20 @@ public class UsuarioController {
         }
 
         Usuario u = dao.login(user.getCorreo(), user.getContrasenaHash());
-        if (u != null) {
-            return Response.ok(u).build();
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Credenciales incorrectas")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+
+        if (u == null) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error en servidor").build();
         }
+
+        if (u.getIdUsuario() == 0) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Correo no registrado").build();
+        }
+
+        if (u.getIdUsuario() == -1) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Contraseña incorrecta").build();
+        }
+
+        return Response.ok(u).build(); // Login exitoso
     }
 
     @GET
